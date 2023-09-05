@@ -36,7 +36,7 @@ jobs:
       - name: Wait for PostgreSQL to Start
         run: |
           for i in {1..30}; do
-            psql -h localhost -U hridoy -d go1 -c "SELECT 1" && break
+            psql -h 127.0.0.1 -U hridoy -d go1 -c "SELECT 1" && break
             echo "Waiting for PostgreSQL to start..."
             sleep 10
           done
