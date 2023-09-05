@@ -33,16 +33,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install postgresql-client
-          curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
-          echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
-          sudo apt-get update
-          sudo apt-get install -y migrate
 
-      - name: Makge generate
-        run: make generate
+      - name: Install go-migrate
+        run: |
+         curl -L https://github.com/golang-migrate/migrate/releases/download/v4.16.2/migrate.linux-amd64.tar.gz | tar xvz
+         sudo mv migrate.linux-amd64 /usr/bin/migrate
+         which migrate
 
-      - name: Migrate db
+
+      - name: migrate db
         run: make mup
-
+        
       - name: Test
         run: make test
