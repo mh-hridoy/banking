@@ -17,6 +17,7 @@ jobs:
           POSTGRES_USER: hridoy
           POSTGRES_PASSWORD: "2543"
           POSTGRES_DB: go1
+          POSTGRES_HOST_AUTH_METHOD: all
         ports:
           - 5432:5432 # Forward the PostgreSQL port
 
@@ -32,14 +33,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install postgresql-client
-
-      - name: Wait for PostgreSQL to Start
-        run: |
-          for i in {1..30}; do
-          psql -h 127.0.0.1 -U hridoy -d go1 -c "SELECT 1" -w -W "2543" && break
-          echo "Waiting for PostgreSQL to start..."
-          sleep 10
-          done
 
       - name: Test
         run: make test
