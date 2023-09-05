@@ -12,24 +12,34 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:12
         env:
           POSTGRES_USER: hridoy
           POSTGRES_PASSWORD: 2543
           POSTGRES_DB: go1
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        ports:
+          - 5432:5432  # Forward the PostgreSQL port
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2  # Use v2 instead of v3
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v2  # Use v2 instead of v4
         with:
           go-version: "1.20"
+
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install postgresql-client
+
+      - name: Wait for PostgreSQL to Start
+        run: |
+          for i in {1..30}; do
+            psql -h localhost -U hridoy -d go1 -c "SELECT 1" && break
+            echo "Waiting for PostgreSQL to start..."
+            sleep 10
+          done
 
       - name: Test
         run: make test
