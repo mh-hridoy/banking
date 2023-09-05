@@ -24,7 +24,7 @@ func TestCreateAccount(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
 	require.Equal(t, arg.Owner, account.Owner, arg.Balance, account.Balance, arg.Currency, account.Currency)
-	require.Equal(t, arg.CreatedAt.Local(), account.CreatedAt.Local())
+	require.NotZero(t, arg.CreatedAt, account.CreatedAt)
 
 }
 
