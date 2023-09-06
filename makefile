@@ -10,5 +10,8 @@ test:
 generate:
 	sqlc generate
 
+run:
+	go run main.go
+
 .PHONY:
 	mup mdown test generate
