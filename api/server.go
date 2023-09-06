@@ -2,6 +2,7 @@ package api
 
 import (
 	db "github/mh-hridoy/banking/db/sqlc"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +20,9 @@ func NewServer(store *db.Store) *Server {
 	router.POST("/account", server.CreateAccount)
 	router.GET("/account/:id", server.GetSingleAccount)
 	router.GET("/account", server.GetListOfAccount)
+	router.DELETE("/account/:id", server.DeleteSingleAccount)
+
+	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{"message": "Route is not valid"}) })
 
 	server.route = router
 	return server

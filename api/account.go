@@ -86,3 +86,28 @@ func (s *Server) GetListOfAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, accounts)
 
 }
+
+type DeleteSingleAccountParam struct {
+	ID int32 `uri:"id" binding:"required,min=1"`
+}
+
+func (s *Server) DeleteSingleAccount(ctx *gin.Context) {
+	var accountId DeleteSingleAccountParam
+
+	err := ctx.ShouldBindUri(&accountId)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotAcceptable, errorHandler(err))
+		return
+	}
+
+	errs := s.store.DeleteAccount(ctx, int64(accountId.ID))
+
+	if errs != nil {
+		ctx.JSON(http.StatusBadRequest, errorHandler(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Deleted Successfully"})
+
+}
