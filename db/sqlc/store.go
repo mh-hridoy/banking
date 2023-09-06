@@ -91,7 +91,7 @@ func (store *Store) TransferExec(ctx context.Context, arg TransferTxParams) (Tra
 			return err
 		}
 
-		err = q.UpdateAccount(ctx, UpdateAccountParams{
+		_, err = q.UpdateAccount(ctx, UpdateAccountParams{
 			ID:      arg.FromAccountID,
 			Balance: account1.Balance - arg.Amount,
 		})
@@ -104,7 +104,7 @@ func (store *Store) TransferExec(ctx context.Context, arg TransferTxParams) (Tra
 			return err
 		}
 
-		err = q.UpdateAccount(ctx, UpdateAccountParams{
+		_, err = q.UpdateAccount(ctx, UpdateAccountParams{
 			ID:      arg.ToAccountID,
 			Balance: account2.Balance + arg.Amount,
 		})

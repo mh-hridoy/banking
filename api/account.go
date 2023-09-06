@@ -33,6 +33,31 @@ func (s *Server) CreateAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, account)
 }
 
+type UpdateAccountParams struct {
+	Balance int64 `json:"balance" binding:"required"`
+	ID      int64 `json:"id" binding:"required" `
+}
+
+func (s *Server) UpdateAccount(ctx *gin.Context) {
+	var accountUpdate UpdateAccountParams
+	if err := ctx.ShouldBindJSON(&accountUpdate); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorHandler(err))
+		return
+	}
+
+	account, err := s.store.UpdateAccount(ctx, db.UpdateAccountParams{
+		Balance: accountUpdate.Balance,
+		ID:      accountUpdate.ID,
+	})
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorHandler(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, account)
+}
+
 type GetSingleAccountParam struct {
 	ID int32 `uri:"id" binding:"required,min=1"`
 }
