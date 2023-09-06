@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	db "github/mh-hridoy/banking/db/sqlc"
 	"net/http"
 
@@ -31,4 +32,31 @@ func (s *Server) CreateAccount(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, account)
+}
+
+type GetSingleAccountParam struct {
+	ID int32 `uri:"id" binding:"required,min=1"`
+}
+
+func (s *Server) GetSingleAccount(ctx *gin.Context) {
+	var accountId GetSingleAccountParam
+
+	err := ctx.ShouldBindUri(&accountId)
+
+	fmt.Println(accountId)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotAcceptable, errorHandler(err))
+		return
+	}
+
+	account, errs := s.store.GetAccounts(ctx, int64(accountId.ID))
+
+	if errs != nil {
+		ctx.JSON(http.StatusBadRequest, errorHandler(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, account)
+
 }
