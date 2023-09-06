@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	db "github/mh-hridoy/banking/db/sqlc"
 	"net/http"
 
@@ -43,8 +42,6 @@ func (s *Server) GetSingleAccount(ctx *gin.Context) {
 
 	err := ctx.ShouldBindUri(&accountId)
 
-	fmt.Println(accountId)
-
 	if err != nil {
 		ctx.JSON(http.StatusNotAcceptable, errorHandler(err))
 		return
@@ -58,5 +55,34 @@ func (s *Server) GetSingleAccount(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, account)
+
+}
+
+type ListAccountsParams struct {
+	Limit  int32 `form:"limit" binding:"required,min=5,max=10"`
+	Offset int32 `form:"offset" binding:"required,min=1"`
+}
+
+func (s *Server) GetListOfAccount(ctx *gin.Context) {
+	var listParams ListAccountsParams
+
+	err := ctx.ShouldBindQuery(&listParams)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotAcceptable, errorHandler(err))
+		return
+	}
+
+	accounts, errs := s.store.ListAccounts(ctx, db.ListAccountsParams{
+		Limit:  listParams.Limit,
+		Offset: (listParams.Offset - 1) * listParams.Limit,
+	})
+
+	if errs != nil {
+		ctx.JSON(http.StatusBadRequest, errorHandler(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, accounts)
 
 }
