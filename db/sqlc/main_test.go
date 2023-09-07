@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"github/mh-hridoy/banking/utils"
 	"log"
 	"os"
 	"testing"
@@ -9,17 +10,17 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var (
-	sqlDriver = "postgres"
-	sqlUrl    = "postgresql://hridoy:2543@localhost:5432/go1?sslmode=disable"
-)
-
 var testQueries *Queries
 var testDb *sql.DB
 
 func TestMain(m *testing.M) {
+	config, errs := utils.LoadConfig("../..")
+
+	if errs != nil {
+		log.Fatal("env cannot be loaded!")
+	}
 	var err error
-	testDb, err = sql.Open(sqlDriver, sqlUrl)
+	testDb, err = sql.Open(config.DBDriver, config.DBurl)
 
 	if err != nil {
 		log.Fatal("cannot connect to db", err)
